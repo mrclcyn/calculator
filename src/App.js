@@ -1,193 +1,33 @@
 import "./App.css";
-
-// import { useState, useEffect } from "react";
 import { useReducer } from "react";
 
-const initialState = {
-  display: "0",
-  memo: 0,
-  eqMemo: 0,
-  eqControl: false,
-  operation: "none",
-  clearDisplay: false,
-};
-
-const operations = (prevState, action) => {
-  const {
-    display: prevDisplay,
-    memo: prevMemo,
-    eqMemo: prevEqMemo,
-    eqControl: prevEqControl,
-    operation: prevOperation,
-    clearDisplay: prevClearDisplay,
-  } = prevState;
-  switch (action.type) {
-    case "NUMBER":
-      if (prevDisplay.length < 15) {
-        if (prevClearDisplay) {
-          return {
-            ...prevState,
-            display: action.payload.toString(),
-            clearDisplay: false,
-          };
-        } else {
-          return {
-            ...prevState,
-            display: prevDisplay + action.payload.toString(),
-          };
-        }
-      } else {
-        return {
-          ...prevState,
-        };
-      }
-    case "EQUAL":
-      if (prevOperation === "sum") {
-        // if (prevState.eqControl === false) {
-
-        const calcSum = () => {
-          return (prevMemo + Number(prevDisplay)).toString();
-        };
-        const sumResult = calcSum();
-
-        return {
-          ...prevState,
-          display: sumResult,
-          eqControl: true,
-          clearDisplay: false,
-        };
-        // } else {
-
-        //   return {
-        //     ...prevState,
-        //     display: newDisplay,
-        //     memo: Number(newDisplay),
-        //   };
-        // }
-      } else if (prevOperation === "sub") {
-        const calcSub = () => {
-          return (prevMemo - Number(prevDisplay)).toString();
-        };
-        const subResult = calcSub();
-
-        return {
-          ...prevState,
-          display: subResult,
-          eqControl: true,
-        };
-      } else if (prevOperation === "mul") {
-        const calcMul = () => {
-          return (prevMemo * Number(prevDisplay)).toString();
-        };
-        const mulResult = calcMul();
-
-        return {
-          ...prevState,
-          display: mulResult,
-          eqControl: true,
-        };
-      } else if (prevOperation === "div") {
-        const calcDiv = () => {
-          function ParseFloat(theNumber, percision) {
-            theNumber = theNumber.toString();
-            theNumber = theNumber.slice(
-              0,
-              theNumber.indexOf(".") + percision + 1
-            );
-            return Number(theNumber);
-          }
-          const final = ParseFloat(prevMemo / Number(prevDisplay), 3);
-          return final;
-        };
-        const divResult = calcDiv();
-
-        return {
-          ...prevState,
-          display: divResult,
-          eqControl: true,
-        };
-      } else {
-        return {
-          ...prevState,
-        };
-      }
-    case "SUMMATION":
-      return {
-        ...prevState,
-        // eqControl: false,
-        memo: Number(prevDisplay),
-        operation: "sum",
-        clearDisplay: true,
-      };
-
-    case "SUBTRACTION":
-      return {
-        ...prevState,
-        memo: Number(prevDisplay),
-        operation: "sub",
-        clearDisplay: true,
-      };
-
-    case "MULTIPLICATION":
-      return {
-        ...prevState,
-        memo: Number(prevDisplay),
-        operation: "mul",
-        clearDisplay: true,
-      };
-    case "DIVISION":
-      return {
-        ...prevState,
-        memo: Number(prevDisplay),
-        operation: "div",
-        clearDisplay: true,
-      };
-    case "CLEAR":
-      return initialState;
-    case "NEGATION":
-      return {
-        ...prevState,
-        display: (Number(prevDisplay) * -1).toString(),
-      };
-    case "FLOATING":
-      if (prevClearDisplay) {
-        return {
-          ...prevState,
-          display: "0.",
-          clearDisplay: false,
-        };
-      } else {
-        return {
-          ...prevState,
-          display: !prevDisplay.includes(".") ? prevDisplay + "." : prevDisplay,
-        };
-      }
-    default:
-      return "Error";
-  }
-};
+import { operations } from "./operations";
 
 function App() {
-  const [state, dispatch] = useReducer(operations, initialState);
+  // defining the reducer with an initial state
+
+  const [state, dispatch] = useReducer(operations, {
+    display: "0",
+    memo: 0,
+    eqMemo: 0,
+    eqControl: false,
+    operation: "none",
+    clearDisplay: false,
+    clearLastNumber: false,
+  });
   console.log(state);
 
+  // dispatch functions
+
   const equal = () => dispatch({ type: "EQUAL", payload: state });
-
   const enterNumber = (num) => dispatch({ type: "NUMBER", payload: num });
-
   const clearDisplay = () => dispatch({ type: "CLEAR" });
-
   const negation = () => dispatch({ type: "NEGATION" });
-
   const summation = () => dispatch({ type: "SUMMATION", payload: equal });
-
   const subtraction = () => dispatch({ type: "SUBTRACTION", payload: equal });
-
   const multiplication = () =>
     dispatch({ type: "MULTIPLICATION", payload: equal });
-
   const division = () => dispatch({ type: "DIVISION", payload: equal });
-
   const floating = () => dispatch({ type: "FLOATING" });
 
   return (
@@ -202,7 +42,7 @@ function App() {
         </header>
         <div className="first-row">
           <div onClick={() => clearDisplay()} className="col-25">
-            AC | C
+            {state.clearLastNumber ? "C" : "AC"}
           </div>
           <div onClick={() => negation()} className="col-25">
             ±
