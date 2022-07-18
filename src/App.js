@@ -1,9 +1,17 @@
 import "./App.css";
-import { useReducer } from "react";
-
+import { useReducer, useState } from "react";
 import { operations } from "./operations";
 
 function App() {
+  // STYLING STATE
+
+  const [selected, setSelected] = useState({
+    sum: false,
+    sub: false,
+    mul: false,
+    div: false,
+  });
+
   // defining the reducer with an initial state
 
   const [state, dispatch] = useReducer(operations, {
@@ -15,30 +23,56 @@ function App() {
     clearDisplay: false,
     clearLastNumber: false,
   });
-  console.log(state);
 
   // dispatch functions
 
-  const equal = () => dispatch({ type: "EQUAL", payload: state });
+  const equal = (intermediate) => {
+    setSelected({
+      sum: false,
+      sub: false,
+      mul: false,
+      div: false,
+    });
+    dispatch({ type: "EQUAL", payload: intermediate || false });
+  };
   const enterNumber = (num) => dispatch({ type: "NUMBER", payload: num });
   const clearDisplay = () => dispatch({ type: "CLEAR" });
   const negation = () => dispatch({ type: "NEGATION" });
-  const summation = () => dispatch({ type: "SUMMATION", payload: equal });
-  const subtraction = () => dispatch({ type: "SUBTRACTION", payload: equal });
-  const multiplication = () =>
-    dispatch({ type: "MULTIPLICATION", payload: equal });
-  const division = () => dispatch({ type: "DIVISION", payload: equal });
+  const summation = () => {
+    equal(true);
+    setSelected({ sum: true });
+    dispatch({ type: "SUMMATION" });
+  };
+  const subtraction = () => {
+    equal(true);
+    setSelected({ sub: true });
+    dispatch({ type: "SUBTRACTION" });
+  };
+  const multiplication = () => {
+    equal(true);
+    setSelected({ mul: true });
+    dispatch({ type: "MULTIPLICATION" });
+  };
+  const division = () => {
+    equal(true);
+    setSelected({ div: true });
+    dispatch({ type: "DIVISION" });
+  };
   const floating = () => dispatch({ type: "FLOATING" });
+  console.log(state);
+
+  let display =
+    state.display.length > 17 && !state.display.includes(".")
+      ? "Infinity"
+      : state.display;
 
   return (
     <div className="App">
       <div className="calculator">
-        <header style={{ fontSize: state.display.length > 8 && "1.5rem" }}>
-          {state.display.length > 1 &&
-          state.display[0] === "0" &&
-          state.display[1] !== "."
-            ? state.display.slice(1)
-            : state.display}
+        <header style={{ fontSize: display.length > 8 && "1.5rem" }}>
+          {display.length > 1 && display[0] === "0" && display[1] !== "."
+            ? display.slice(1)
+            : display}
         </header>
         <div className="first-row">
           <div onClick={() => clearDisplay()} className="col-25">
@@ -48,7 +82,11 @@ function App() {
             ±
           </div>
           <div className="col-25">%</div>
-          <div onClick={() => division()} className="col-25">
+          <div
+            style={{ backgroundColor: selected.div && "#2d333b69" }}
+            onClick={() => division()}
+            className="col-25"
+          >
             ÷
           </div>
         </div>
@@ -62,7 +100,11 @@ function App() {
           <div onClick={() => enterNumber(9)} className="col-25">
             9
           </div>
-          <div onClick={() => multiplication()} className="col-25">
+          <div
+            style={{ backgroundColor: selected.mul && "#2d333b69" }}
+            onClick={() => multiplication()}
+            className="col-25"
+          >
             ×
           </div>
         </div>
@@ -76,7 +118,11 @@ function App() {
           <div onClick={() => enterNumber(6)} className="col-25">
             6
           </div>
-          <div onClick={() => subtraction()} className="col-25">
+          <div
+            style={{ backgroundColor: selected.sub && "#2d333b69" }}
+            onClick={() => subtraction()}
+            className="col-25"
+          >
             -
           </div>
         </div>
@@ -91,7 +137,7 @@ function App() {
             3
           </div>
           <div
-            // style={{ backgroundColor: operation.sum && "#2d333b69" }}
+            style={{ backgroundColor: selected.sum && "#2d333b69" }}
             onClick={() => summation()}
             className="col-25"
           >
