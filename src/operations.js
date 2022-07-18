@@ -21,7 +21,7 @@ export const operations = (prevState, action) => {
 
   switch (action.type) {
     case "NUMBER":
-      if (prevDisplay.length < 15) {
+      if (prevDisplay.length < 18) {
         if (clearDisplay) {
           return {
             ...prevState,
@@ -32,26 +32,42 @@ export const operations = (prevState, action) => {
         } else {
           return {
             ...prevState,
-            display: prevDisplay + action.payload.toString(),
+            display:
+              prevDisplay === "00"
+                ? "0"
+                : prevDisplay + action.payload.toString(),
             clearLastNumber: true,
           };
         }
+      } else if (clearDisplay) {
+        return {
+          ...prevState,
+          display: action.payload.toString(),
+          clearDisplay: false,
+          clearLastNumber: true,
+        };
       } else {
         return {
           ...prevState,
         };
       }
     case "EQUAL":
-      const eqMemo = !prevEqControl ? Number(prevDisplay) : prevEqMemo;
+      let eqMemo;
+      if (action.payload === true) {
+        console.log(`intermediate:${action.payload}`);
+        eqMemo = Number(prevDisplay);
+      } else {
+        console.log(`intermediate:${action.payload}`);
+        eqMemo = !prevEqControl ? Number(prevDisplay) : prevEqMemo;
+      }
       const statePortion = {
         ...prevState,
         eqMemo,
-        eqControl: true,
+        eqControl: !action.payload ? true : false,
         clearDisplay: false,
       };
 
-      // SUMMATION
-
+      // SUMMATION RESULT
       if (operation === "sum") {
         const calcSum = () => {
           return (prevMemo + eqMemo).toString();
@@ -64,7 +80,7 @@ export const operations = (prevState, action) => {
           memo: Number(sumResult),
         };
 
-        // SUBTRACTION
+        // SUBTRACTION RESULT
       } else if (operation === "sub") {
         const calcSub = () => {
           return (prevMemo - eqMemo).toString();
@@ -77,7 +93,7 @@ export const operations = (prevState, action) => {
           memo: Number(subResult),
         };
 
-        // MULTIPLICATION
+        // MULTIPLICATION RESULT
       } else if (operation === "mul") {
         const calcMul = () => {
           return (prevMemo * eqMemo).toString();
@@ -89,24 +105,26 @@ export const operations = (prevState, action) => {
           display: mulResult,
           memo: Number(mulResult),
         };
+
+        // DIVISION RESULT
       } else if (operation === "div") {
         const calcDiv = () => {
+          // return (prevMemo / eqMemo).toString();
           function ParseFloat(theNumber, percision) {
-            theNumber = theNumber.toString();
             theNumber = theNumber.slice(
               0,
               theNumber.indexOf(".") + percision + 1
             );
             return Number(theNumber);
           }
-          const final = ParseFloat(prevMemo / eqMemo, 2);
+          const final = ParseFloat((prevMemo / eqMemo).toString(), 2);
           return final;
         };
         const divResult = calcDiv();
 
         return {
           ...statePortion,
-          display: divResult,
+          display: divResult.toString(),
           memo: Number(divResult),
         };
       } else {
@@ -117,7 +135,6 @@ export const operations = (prevState, action) => {
     case "SUMMATION":
       return {
         ...prevState,
-        // eqControl: false,
         memo: Number(prevDisplay),
         operation: "sum",
         clearDisplay: true,
