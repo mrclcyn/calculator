@@ -1,3 +1,11 @@
+// All the logic of the React's useReducer hook happens here.
+// The dispatch functions in App.js refer to the "case" here in
+// the big "switch" conditional through "type" parameter.
+//
+//
+//
+// Initial state of the reducer
+
 const initialState = {
   display: "0",
   memo: 0,
@@ -8,7 +16,24 @@ const initialState = {
   clearLastNumber: false,
 };
 
+// Removing extra digits after (result.percision)
+
+function ParseFloat(num) {
+  //
+  // ** percision: the number of digits after floating point
+  //
+  const percision = 2;
+  return num.includes(".")
+    ? Number(num.slice(0, num.indexOf(".") + percision + 1))
+    : num;
+}
+
+// Reducer's operations() function
+
 export const operations = (prevState, action) => {
+  //
+  // Destructuring and renaming prevstate elements
+
   const {
     display: prevDisplay,
     memo: prevMemo,
@@ -19,9 +44,17 @@ export const operations = (prevState, action) => {
     clearLastNumber,
   } = prevState;
 
+  // "switch" decides based on (action.type) which comes from dispatch functions. For numbers, payload is being used which acts like normal props passing in React.
+
   switch (action.type) {
+    //
+    // Handling numeral keypad and setting (state.display) base on received payload
+
     case "NUMBER":
       if (prevDisplay.length < 18) {
+        //
+        // After an operation is done, the display must be altered with the first digit of the next number. Thus "clearDisplay".
+
         if (clearDisplay) {
           return {
             ...prevState,
@@ -52,25 +85,27 @@ export const operations = (prevState, action) => {
         };
       }
     case "EQUAL":
-      let eqMemo;
-      if (action.payload === true) {
-        console.log(`intermediate:${action.payload}`);
-        eqMemo = Number(prevDisplay);
-      } else {
-        console.log(`intermediate:${action.payload}`);
-        eqMemo = !prevEqControl ? Number(prevDisplay) : prevEqMemo;
-      }
+      //
+      // Setting a memory for the equal operand, so it can keep the last input before clicking "equal". "eqControl / prevEqControl" is the boolean controller who checks whether elementary arithmetic operands should initially act as equal in an intermediate trail of operations.
+
+      let eqMemo = action.payload
+        ? Number(prevDisplay)
+        : !prevEqControl
+        ? Number(prevDisplay)
+        : prevEqMemo;
+
       const statePortion = {
         ...prevState,
         eqMemo,
         eqControl: !action.payload ? true : false,
         clearDisplay: false,
       };
-
-      // SUMMATION RESULT
+      //
+      // SUMMATION result
+      //
       if (operation === "sum") {
         const calcSum = () => {
-          return (prevMemo + eqMemo).toString();
+          return ParseFloat((prevMemo + eqMemo).toString());
         };
         const sumResult = calcSum();
 
@@ -79,12 +114,14 @@ export const operations = (prevState, action) => {
           display: sumResult,
           memo: Number(sumResult),
         };
-
-        // SUBTRACTION RESULT
+        //
+        // SUBTRACTION result
+        //
       } else if (operation === "sub") {
         const calcSub = () => {
-          return (prevMemo - eqMemo).toString();
+          return ParseFloat((prevMemo - eqMemo).toString());
         };
+
         const subResult = calcSub();
 
         return {
@@ -92,12 +129,14 @@ export const operations = (prevState, action) => {
           display: subResult,
           memo: Number(subResult),
         };
-
-        // MULTIPLICATION RESULT
+        //
+        // MULTIPLICATION result
+        //
       } else if (operation === "mul") {
         const calcMul = () => {
-          return (prevMemo * eqMemo).toString();
+          return ParseFloat((prevMemo * eqMemo).toString());
         };
+
         const mulResult = calcMul();
 
         return {
@@ -105,21 +144,14 @@ export const operations = (prevState, action) => {
           display: mulResult,
           memo: Number(mulResult),
         };
-
-        // DIVISION RESULT
+        //
+        // DIVISION result
+        //
       } else if (operation === "div") {
         const calcDiv = () => {
-          // return (prevMemo / eqMemo).toString();
-          function ParseFloat(theNumber, percision) {
-            theNumber = theNumber.slice(
-              0,
-              theNumber.indexOf(".") + percision + 1
-            );
-            return Number(theNumber);
-          }
-          const final = ParseFloat((prevMemo / eqMemo).toString(), 2);
-          return final;
+          return ParseFloat((prevMemo / eqMemo).toString());
         };
+
         const divResult = calcDiv();
 
         return {
@@ -132,6 +164,11 @@ export const operations = (prevState, action) => {
           ...prevState,
         };
       }
+    //
+    ///////////////// DISPATCH LOGICS FOR OPERANDS /////////////////
+    //
+    // Handling SUMMATION dispatch
+    //
     case "SUMMATION":
       return {
         ...prevState,
@@ -139,7 +176,9 @@ export const operations = (prevState, action) => {
         operation: "sum",
         clearDisplay: true,
       };
-
+    //
+    // Hendling SUBTRACTION dispatch
+    //
     case "SUBTRACTION":
       return {
         ...prevState,
@@ -147,7 +186,17 @@ export const operations = (prevState, action) => {
         operation: "sub",
         clearDisplay: true,
       };
-
+    //
+    // Hendling PERCENTAGE dispatch
+    //
+    case "PERCENTAGE":
+      return {
+        ...prevState,
+        display: (Number(prevDisplay) / 100).toString(),
+      };
+    //
+    // Hendling MULTIPLICATION dispatch
+    //
     case "MULTIPLICATION":
       return {
         ...prevState,
@@ -155,6 +204,9 @@ export const operations = (prevState, action) => {
         operation: "mul",
         clearDisplay: true,
       };
+    //
+    // Hendling DIVISION dispatch
+    //
     case "DIVISION":
       return {
         ...prevState,
@@ -162,6 +214,9 @@ export const operations = (prevState, action) => {
         operation: "div",
         clearDisplay: true,
       };
+    //
+    // Hendling clear screen (CLEAR dispatch)
+    //
     case "CLEAR":
       if (clearLastNumber) {
         return {
@@ -172,11 +227,17 @@ export const operations = (prevState, action) => {
       } else {
         return initialState;
       }
+    //
+    // Hendling NEGATION dispatch
+    //
     case "NEGATION":
       return {
         ...prevState,
         display: (Number(prevDisplay) * -1).toString(),
       };
+    //
+    // Hendling FLOATING point
+    //
     case "FLOATING":
       if (clearDisplay) {
         return {
