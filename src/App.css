@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap");
 
 * {
-  /* border: 1px dotted red; */
   box-sizing: border-box;
   cursor: default;
 }
@@ -16,7 +15,6 @@
   margin: 0 auto;
   background-color: black;
   color: #c0661c;
-  /* position: relative; */
 }
 
 header {
@@ -62,7 +60,6 @@ header {
   color: lightgray;
 }
 .copyright .github-icon img {
-  /* margin-bottom: 5px; */
   filter: invert(50%);
   width: 30px;
   height: 30px;
