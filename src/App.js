@@ -1,9 +1,12 @@
 import "./App.css";
+import github from "./github.svg";
+
 import { useReducer, useState } from "react";
 import { operations } from "./operations";
 
 function App() {
-  // STYLING STATE
+  //
+  // STYLING STATE: to keep elementary operands selected before the result is being reached
 
   const [selected, setSelected] = useState({
     sum: false,
@@ -12,7 +15,7 @@ function App() {
     div: false,
   });
 
-  // defining the reducer with an initial state
+  // DEFINITION OF THE REDUCER WITH AN INITIAL STATE
 
   const [state, dispatch] = useReducer(operations, {
     display: "0",
@@ -24,7 +27,7 @@ function App() {
     clearLastNumber: false,
   });
 
-  // dispatch functions
+  // DISPATCH FUNCTIONS
 
   const equal = (intermediate) => {
     setSelected({
@@ -36,7 +39,16 @@ function App() {
     dispatch({ type: "EQUAL", payload: intermediate || false });
   };
   const enterNumber = (num) => dispatch({ type: "NUMBER", payload: num });
-  const clearDisplay = () => dispatch({ type: "CLEAR" });
+  const clearDisplay = () => {
+    !state.clearLastNumber &&
+      setSelected({
+        sum: false,
+        sub: false,
+        mul: false,
+        div: false,
+      });
+    dispatch({ type: "CLEAR" });
+  };
   const negation = () => dispatch({ type: "NEGATION" });
   const summation = () => {
     equal(true);
@@ -59,13 +71,17 @@ function App() {
     dispatch({ type: "DIVISION" });
   };
   const floating = () => dispatch({ type: "FLOATING" });
-  console.log(state);
+  const percentage = () => dispatch({ type: "PERCENTAGE" });
+
+  // CONDITIONAL DEFINITION OF "DISPLAY": to limit the length
 
   let display =
     state.display.length > 17 && !state.display.includes(".")
       ? "Infinity"
       : state.display;
 
+  // THE CALCULATOR VIEW
+  //
   return (
     <div className="App">
       <div className="calculator">
@@ -74,6 +90,7 @@ function App() {
             ? display.slice(1)
             : display}
         </header>
+
         <div className="first-row">
           <div onClick={() => clearDisplay()} className="col-25">
             {state.clearLastNumber ? "C" : "AC"}
@@ -81,7 +98,9 @@ function App() {
           <div onClick={() => negation()} className="col-25">
             ±
           </div>
-          <div className="col-25">%</div>
+          <div onClick={() => percentage()} className="col-25">
+            %
+          </div>
           <div
             style={{ backgroundColor: selected.div && "#2d333b69" }}
             onClick={() => division()}
@@ -90,6 +109,7 @@ function App() {
             ÷
           </div>
         </div>
+
         <div className="second-row">
           <div onClick={() => enterNumber(7)} className="col-25">
             7
@@ -108,6 +128,7 @@ function App() {
             ×
           </div>
         </div>
+
         <div className="third-row">
           <div onClick={() => enterNumber(4)} className="col-25">
             4
@@ -126,6 +147,7 @@ function App() {
             -
           </div>
         </div>
+
         <div className="forth-row">
           <div onClick={() => enterNumber(1)} className="col-25">
             1
@@ -144,6 +166,7 @@ function App() {
             +
           </div>
         </div>
+
         <div className="fifth-row">
           <div onClick={() => enterNumber(0)} className="col-50 leftAlign">
             0
@@ -154,6 +177,28 @@ function App() {
           <div onClick={() => equal()} className="col-25">
             =
           </div>
+        </div>
+      </div>
+      <div className="copyright">
+        <a
+          className="github-icon"
+          href="https://github.com/mrclcyn/calculator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img src={github} alt="GitHub Repo of the project" />
+        </a>
+        <br />
+        Made by{" "}
+        <div className="mrclcyn-ct">
+          <a
+            className="mrclcyn"
+            href="https://github.com/mrclcyn"
+            target="_blank"
+            rel="noreferrer"
+          >
+            mrclcyn
+          </a>
         </div>
       </div>
     </div>

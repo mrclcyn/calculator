@@ -1,3 +1,7 @@
+# React Calculator using useReducer hook
+
+This project is deployed: [https://react-reducer-calculator.vercel.app/](https://react-reducer-calculator.vercel.app/)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

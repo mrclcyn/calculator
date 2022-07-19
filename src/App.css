@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap");
+
 * {
   /* border: 1px dotted red; */
   box-sizing: border-box;
@@ -52,4 +54,66 @@ header {
   text-align: left;
   font-size: 1.5rem;
   padding: 20px 29px;
+}
+.copyright {
+  text-align: center;
+  padding-top: 30px;
+  font-size: 14px;
+  color: lightgray;
+}
+.copyright .github-icon img {
+  /* margin-bottom: 5px; */
+  filter: invert(50%);
+  width: 30px;
+  height: 30px;
+  transition: filter 0.5s;
+}
+.copyright .github-icon img:hover {
+  filter: invert(100%);
+}
+.copyright .mrclcyn-ct {
+  display: inline-block;
+}
+.copyright .mrclcyn-ct .mrclcyn {
+  font-weight: bold;
+  display: inline-block;
+  position: relative;
+  color: #ff8800;
+  text-decoration: none;
+  font-size: 18px;
+  font-family: "Gloria Hallelujah", cursive;
+  cursor: none;
+  transition: 0.5s;
+  -webkit-transition: 0.5s;
+  padding-left: 5px;
+}
+@keyframes mrclcyn {
+  0% {
+    color: #001aff;
+    left: -2px;
+    bottom: -2px;
+  }
+  25% {
+    color: rgba(73, 73, 73, 0.431372549);
+    left: 0px;
+    bottom: -2px;
+  }
+  50% {
+    color: #ff0000;
+    left: 2px;
+    bottom: 0px;
+  }
+  75% {
+    color: #000000;
+    left: 0px;
+    bottom: 2px;
+  }
+  100% {
+    color: #ffffff;
+    left: -2px;
+    bottom: 0px;
+  }
+}
+.copyright .mrclcyn-ct .mrclcyn:hover {
+  animation: mrclcyn 0.0001s linear infinite;
 }
