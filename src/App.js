@@ -1,4 +1,6 @@
 import "./App.css";
+import github from "./github.svg";
+
 import { useReducer, useState } from "react";
 import { operations } from "./operations";
 
@@ -175,6 +177,28 @@ function App() {
           <div onClick={() => equal()} className="col-25">
             =
           </div>
+        </div>
+      </div>
+      <div className="copyright">
+        <a
+          className="github-icon"
+          href="https://github.com/mrclcyn/calculator"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img src={github} alt="GitHub Repo of the project" />
+        </a>
+        <br />
+        Made by{" "}
+        <div className="mrclcyn-ct">
+          <a
+            className="mrclcyn"
+            href="https://github.com/mrclcyn"
+            target="_blank"
+            rel="noreferrer"
+          >
+            mrclcyn
+          </a>
         </div>
       </div>
     </div>
