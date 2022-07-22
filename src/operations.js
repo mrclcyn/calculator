@@ -23,6 +23,7 @@ function ParseFloat(num) {
   // ** percision: the number of digits after floating point
   //
   const percision = 2;
+
   return num.includes(".")
     ? Number(num.slice(0, num.indexOf(".") + percision + 1))
     : num;
@@ -32,18 +33,23 @@ function ParseFloat(num) {
 
 export const operations = (prevState, action) => {
   //
-  // Destructuring and renaming prevstate elements
+  // Destructuring and renaming prevState elements
 
-  const {
+  let {
     display: prevDisplay,
     memo: prevMemo,
     eqMemo: prevEqMemo,
-    eqControl: prevEqControl,
+    eqControl,
     operation,
     clearDisplay,
     clearLastNumber,
   } = prevState;
 
+  const operandsStatePortion = {
+    ...prevState,
+    memo: Number(prevDisplay),
+    clearDisplay: true,
+  };
   // "switch" decides based on (action.type) which comes from dispatch functions. For numbers, payload is being used which acts like normal props passing in React.
 
   switch (action.type) {
@@ -90,7 +96,7 @@ export const operations = (prevState, action) => {
 
       let eqMemo = action.payload
         ? Number(prevDisplay)
-        : !prevEqControl
+        : !eqControl
         ? Number(prevDisplay)
         : prevEqMemo;
 
@@ -99,6 +105,7 @@ export const operations = (prevState, action) => {
         eqMemo,
         eqControl: !action.payload ? true : false,
         clearDisplay: false,
+        // operation: "none",
       };
       //
       // SUMMATION result
@@ -169,22 +176,19 @@ export const operations = (prevState, action) => {
     //
     // Handling SUMMATION dispatch
     //
+
     case "SUMMATION":
       return {
-        ...prevState,
-        memo: Number(prevDisplay),
+        ...operandsStatePortion,
         operation: "sum",
-        clearDisplay: true,
       };
     //
     // Hendling SUBTRACTION dispatch
     //
     case "SUBTRACTION":
       return {
-        ...prevState,
-        memo: Number(prevDisplay),
+        ...operandsStatePortion,
         operation: "sub",
-        clearDisplay: true,
       };
     //
     // Hendling PERCENTAGE dispatch
@@ -199,20 +203,16 @@ export const operations = (prevState, action) => {
     //
     case "MULTIPLICATION":
       return {
-        ...prevState,
-        memo: Number(prevDisplay),
+        ...operandsStatePortion,
         operation: "mul",
-        clearDisplay: true,
       };
     //
     // Hendling DIVISION dispatch
     //
     case "DIVISION":
       return {
-        ...prevState,
-        memo: Number(prevDisplay),
+        ...operandsStatePortion,
         operation: "div",
-        clearDisplay: true,
       };
     //
     // Hendling clear screen (CLEAR dispatch)
