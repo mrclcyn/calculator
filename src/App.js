@@ -82,6 +82,7 @@ function App() {
 
   // THE CALCULATOR VIEW
   //
+  console.log(state);
   return (
     <div className="App">
       <div className="calculator">
